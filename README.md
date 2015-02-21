@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="" alt="Atys Logo" width="40%">
+  <img src="Atys.png" alt="Atys Logo">
 </p>   
 
 ATYS - PHP tools for Qobuz library
