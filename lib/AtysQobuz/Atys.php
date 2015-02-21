@@ -15,6 +15,7 @@ class Atys
 
 	public static $CacheDirectory	= false ;
 	protected static $_CacheLength	= 3600 ;
+	private static $_cacheReader ;
 
 	protected static $_authMethods = array(
 										'album/get' =>
@@ -42,7 +43,7 @@ class Atys
 				$self::$_UserToken = null ;
 			}
 
-			public static function setCachLength ($length) {
+			public static function setCacheLength ($length) {
 				if (!is_int($length) && $length !== null) :
 					throw new \Exception ('Not valid cache length');
 				else :
@@ -52,7 +53,7 @@ class Atys
 
 		# Config Getters
 			public static function getCacheLength () {
-				return self::_CacheLength;
+				return self::$_CacheLength;
 			}
 
 
@@ -95,15 +96,82 @@ class Atys
 	}
 
 
+	// Internal Cache system
+
+	protected static function getCacheReader () {
+		$indexPath = self::$CacheDirectory .  'AtysCache.json' ;
+
+		if (empty(self::$_cacheReader)) :
+			if ( !is_writable($indexPath) ) : 
+				if (!file_put_contents($indexPath, json_encode([]))) : return false; endif;
+				;
+			endif;
+
+			self::$_cacheReader = json_decode( file_get_contents($indexPath), true );
+		endif;
+
+		return true ;
+	}
+
+	protected static function getObjectCache ($method, $params) {
+		
+		if (!self::isCache() || !self::getCacheReader()) :
+			return false;
+		endif;
+
+		$search = hash('sha224', serialize([$method,$params]));
+		$result = false;
+		$change = false ;
+
+		foreach (self::$_cacheReader as $key => $value) :
+			if ( (time() - $value['timestamp']) > self::$_CacheLength ) :
+				unset(self::$_cacheReader[$key]);
+				$change = true ;
+				continue;
+			endif;
+
+			if ($key === $search) :
+				$result = self::$_cacheReader[$key];
+			endif;
+		endforeach;
+
+		if ($change) : file_put_contents(	self::$CacheDirectory .  'AtysCache.json',
+											json_encode(self::$_cacheReader)
+										);
+		endif;
+
+		return $result ;
+	}
+
+	protected static function setObjectCache ($content, $key) {
+		if (!self::isCache() || !self::getCacheReader()) :
+			return false;
+		endif;
+
+		self::$_cacheReader[$key] = array (
+											'timestamp' => time(),
+											'result' => $content
+		);
+
+		file_put_contents(	self::$CacheDirectory .  'AtysCache.json',
+											json_encode(self::$_cacheReader)
+		);
+
+		return true ;
+	}
+
 
 	// Getters
 
-	public static function request ($method, array $params) {
+	public static function request ($method, array $params, $noCache = false) {
+		ksort($params);
+		$objectCache = self::getObjectCache($method, $params);
+
 		if ( !is_string($method) || !array_key_exists($method, self::$_authMethods) ) :
 			throw new \Exception ("Method is not supported");
+		elseif (!$noCache && $objectCache !== false) :
+			$content = $objectCache['result'] ;
 		else :
-			ksort($params);
-
 			// Sending request
 			$curl = curl_init(self::buildURL($method, $params));
 			self::setParamToCURL($curl, $method);
@@ -138,10 +206,11 @@ class Atys
 			curl_close($curl);
 
 			$content = json_decode($content, true);
-
-			return $content;
+			self::setObjectCache($content, hash('sha224', serialize([$method,$params])));
 
 		endif;
+
+		return $content;
 	}
 
 }
