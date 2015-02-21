@@ -5,6 +5,11 @@
 
 namespace AtysQobuz ;
 
+// Hooo Boring PSR is not enabled, let do it
+if ( !class_exists(__NAMESPACE__.'\\Entity\\Album') ) :
+	require_once __DIR__ . DIRECTORY_SEPARATOR . 'Entity'. DIRECTORY_SEPARATOR .'Album.php';
+endif;
+
 // Static Call - A static carrier branch for Qobuz
 
 class Atys
@@ -19,7 +24,7 @@ class Atys
 
 	protected static $_authMethods = array(
 										'album/get' =>
-											array('type' => 'public', 'Class' => 'namespace\Album' ),
+											array('type' => 'public', 'Class' => __NAMESPACE__.'\\'.'Entity\\Album' ),
 										'album/getFeatured' =>
 											array('type' => 'public', 'Method' => 'self::AlbumList' ),
 										'playlist/getFeatured.md'  =>
@@ -210,7 +215,12 @@ class Atys
 
 		endif;
 
+		// Format Return Value
+		if ( !empty(self::$_authMethods[$method]['Class']) ) :
+			$classname = self::$_authMethods[$method]['Class'];
+			$content = new $classname ($content);
+		endif;
+
 		return $content;
 	}
-
 }
