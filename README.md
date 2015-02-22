@@ -1,5 +1,6 @@
 <p align="center">
-  <img src="Atys.png" alt="Atys Logo">
+  <img src="Atys.png" alt="Atys Logo"><br>
+  <em>Atys is preferred all as pine!</em>
 </p>   
 
 ATYS - PHP tools for Qobuz library
