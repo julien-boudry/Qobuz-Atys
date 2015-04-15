@@ -6,7 +6,7 @@
 namespace AtysQobuz ;
 
 // Hooo Boring PSR is not enabled, let do it
-if ( !class_exists(__NAMESPACE__.'\\Entity\\Album') ) :
+if ( !class_exists( namespace\Entity\Album::class ) ) :
 	require_once __DIR__ . DIRECTORY_SEPARATOR . 'Entity'. DIRECTORY_SEPARATOR .'Album.php';
 endif;
 
@@ -24,7 +24,7 @@ class Atys
 
 	protected static $_authMethods = array(
 										'album/get' =>
-											array('type' => 'public', 'Class' => __NAMESPACE__.'\\'.'Entity\\Album' ),
+											array('type' => 'public', 'Class' => namespace\Entity\Album::class ),
 										'album/getFeatured' =>
 											array('type' => 'public', 'Method' => 'self::AlbumList' ),
 										'playlist/getFeatured.md'  =>
