@@ -19,6 +19,11 @@ class Album
     	endforeach;
     }
 
+    public function getArticles()
+    {
+        return $this->articles;
+    }
+
     public function getArtist()
     {
         return $this->artist;
