@@ -79,7 +79,7 @@ class Atys
 	protected static function buildURL ($method, array $params) {
 		$url = 'http://www.qobuz.com/api.json/0.2/' . $method . '?' ;
 
-		if (self::$_authMethods[$method]['type'] === 'private') :
+		if (isset(self::$_authMethods[$method]['type']) && self::$_authMethods[$method]['type'] === 'private') :
 			// Do something more (md5, request_ts etc.)
 		endif;
 
@@ -95,7 +95,7 @@ class Atys
 		curl_setopt($curl, CURLOPT_COOKIESESSION, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, ['X-App-Id: ' . self::$AppID]);
 
-		if (self::$_authMethods[$method]['type'] === 'private') :
+		if (isset(self::$_authMethods[$method]['type']) && self::$_authMethods[$method]['type'] === 'private') :
 			// Do something more (token)
 		endif;
 	}
@@ -172,7 +172,7 @@ class Atys
 		ksort($params);
 		$objectCache = self::getObjectCache($method, $params);
 
-		if ( !is_string($method) || !array_key_exists($method, self::$_authMethods) ) :
+		if ( !is_string($method) ) :
 			throw new \Exception ("Method is not supported");
 		elseif (!$noCache && $objectCache !== false) :
 			$content = $objectCache['result'] ;
