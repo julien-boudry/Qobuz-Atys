@@ -1,11 +1,10 @@
 <p align="center">
   <img src="Atys.png" alt="Atys Logo"><br>
-  <em>Atys is preferred all as pine!</em>
+  <em>We all prefer him as a pine!</em>
 </p>   
 
 ATYS - PHP tools for Qobuz library
 ===========================
-_We all prefer him as a pine_
 
 ```php
 use AtysQobuz\Atys ;
