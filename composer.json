@@ -15,7 +15,7 @@
         "php": ">=5.5",
         "ext-ctype": "*",
         "ext-json": "*",
-        "ext-curl": "*",
+        "ext-curl": "*"
     },
     "autoload": {
         "psr-4": { "AtysQobuz\\": "lib/" }
