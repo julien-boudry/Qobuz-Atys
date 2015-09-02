@@ -83,8 +83,11 @@ class Atys
 			// Do something more (md5, request_ts etc.)
 		endif;
 
+		$i = 0;
 		foreach ($params as $pKey => $pValue) :
-			$url .= $pKey . '=' . ( (string) $pValue ) . '&' ;
+			if ($i !== 0) {$url .= '&';}
+			$url .= $pKey . '=' . ( (string) $pValue ) ;
+			$i++;
 		endforeach;
 
 		return $url;
