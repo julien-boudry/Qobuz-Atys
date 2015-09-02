@@ -5,7 +5,7 @@
 
 ATYS - PHP tools for Qobuz library
 ===========================
-_Atys is preferred all as pine!_
+_We all prefer him as a pine_
 
 ```php
 use AtysQobuz\Atys ;
