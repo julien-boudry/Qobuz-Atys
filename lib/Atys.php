@@ -16,7 +16,7 @@ class Atys
 {
     // Configuration
 
-    const VERSION = 0.1 ;
+    const VERSION = 0.2 ;
 
     public static $CacheDirectory   = false ;
     protected static $_CacheLength  = 3600 ;
