@@ -1,0 +1,23 @@
+{
+    "name": "julien-boudry/Qobuz-Atys",
+    "license": "MIT",
+    "type": "library",
+    "homepage": "https://github.com/julien-boudry/Qobuz-Atys",
+    "authors": [
+        {
+            "name": "Julien Boudry",
+            "email": "julien.boudry@supinternet.fr",
+            "homepage": "http://www.julien-boudry.net",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "ext-ctype": "*",
+        "ext-json": "*",
+        "ext-curl": "*",
+    },
+    "autoload": {
+        "psr-4": { "AtysQobuz\\": "lib/" }
+    }
+}
