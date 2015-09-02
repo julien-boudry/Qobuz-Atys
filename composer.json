@@ -21,3 +21,5 @@
         "psr-4": { "AtysQobuz\\": "lib/" }
     }
 }
+
+/* Good */
