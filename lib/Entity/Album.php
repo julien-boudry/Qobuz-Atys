@@ -10,13 +10,13 @@ class Album
 {
     public function __construct($input)
     {
-    	if (is_string($input)) : 
-    		$input = json_decode($input, true);
-    	endif;
+        if (is_string($input)) : 
+            $input = json_decode($input, true);
+        endif;
 
-    	foreach ($input as $key => $value) :
-    		$this->{$key} = $value ;
-    	endforeach;
+        foreach ($input as $key => $value) :
+            $this->{$key} = $value ;
+        endforeach;
     }
 
     public function getArticles()
