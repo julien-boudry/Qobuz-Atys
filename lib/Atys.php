@@ -22,6 +22,7 @@ class Atys
     protected static $_CacheLength  = 3600 ;
     private static $_cacheReader ;
 
+            ## A revoir, pas top
     protected static $_authMethods = array(
                                         'album/get' =>
                                             array('type' => 'public', 'Class' => namespace\Entity\Album::class ),
@@ -30,13 +31,18 @@ class Atys
                                         'playlist/getFeatured.md'  =>
                                             array('type' => 'public'),
                                         'playlist/get.md'  =>
-                                            array('type' => 'public')
+                                            array('type' => 'public'),
+                                        'purchase/getUserPurchases' =>
+                                            array('type' =>'private')
                                     );
 
-    public static  $AppID = '100000000' ;
+    public static $AppID = '100000000' ;
+    public static $Login;
+    private static $PasswordMD5;
+
     private static $_AppSecret ;
 
-    protected static $_UserToken ;
+    public static $_UserToken ;
 
 
         # Config Setters
@@ -80,7 +86,7 @@ class Atys
         $url = 'http://www.qobuz.com/api.json/0.2/' . $method . '?' ;
 
         if (isset(self::$_authMethods[$method]['type']) && self::$_authMethods[$method]['type'] === 'private') :
-            // Do something more (md5, request_ts etc.)
+            // Something more
         endif;
 
         $i = 0;
@@ -96,11 +102,38 @@ class Atys
     protected static function setParamToCURL (&$curl, $method) {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_COOKIESESSION, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, ['X-App-Id: ' . self::$AppID]);
+        $header = ['X-App-Id: ' . self::$AppID];
 
         if (isset(self::$_authMethods[$method]['type']) && self::$_authMethods[$method]['type'] === 'private') :
-            // Do something more (token)
+            self::createToken();
         endif;
+
+        if (!empty(self::$_UserToken)) {
+            $header[] = 'X-User-Auth-Token: ' . self::$_UserToken;
+        }
+
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+    }
+
+    // Token
+
+    public static function createToken () {
+
+        if (!empty(self::$_UserToken)) {
+            return false;
+        }
+        elseif (empty(self::$Login) || empty(self::$PasswordMD5)) {
+            throw new \Exception ("No Login/Password given");
+        }
+
+        $r = self::request('user/login', array(
+                'username' => self::$Login,
+                'password' => self::$PasswordMD5
+            ),
+            true
+        ) ;
+                    
+        self::$_UserToken = $r['user_auth_token']; 
     }
 
 
@@ -171,7 +204,7 @@ class Atys
 
     // Getters
 
-    public static function request ($method, array $params, $noCache = false) {
+    public static function request ($method, array $params = [], $noCache = false) {
         ksort($params);
         $objectCache = self::getObjectCache($method, $params);
 
@@ -225,5 +258,11 @@ class Atys
         endif;
 
         return $content;
+    }
+
+    // Setters
+
+    public static function setPasswordMD5 ($pass) {
+        self::$PasswordMD5 = $pass;
     }
 }
